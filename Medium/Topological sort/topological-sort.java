@@ -60,40 +60,46 @@ class Main {
 
 class Solution
 {
-    
-    static void topologicalSort(int src, boolean visited[], Stack<Integer> s, ArrayList<ArrayList<Integer>> adj ){
-        visited[src] = true;
-
-        for(int nbr : adj.get(src)){
-            if(visited[nbr] == false){
-                topologicalSort(nbr, visited, s, adj);
-            }
-        }
-
-        s.push(src);
-    }
-    
-    
     //Function to return list containing vertices in Topological order. 
     static int[] topoSort(int V, ArrayList<ArrayList<Integer>> adj) 
     {
-        int arr[] = new int[V];
-        boolean visited [] = new boolean[V];
-        Stack<Integer> s = new Stack<>();
+        int arr[] = new int[V]; int idx = 0;
+        Queue<Integer> q = new LinkedList<>();
+        HashMap<Integer, Integer> hm = new HashMap<>();
         
-        for(int node=0;node<V;node++){
-            if(!visited[node]){
-                topologicalSort(node, visited, s, adj);
+        for(int i=0;i<V;i++){
+            hm.put(i,0);
+        }
+        
+        for(int i=0;i<V;i++){
+            for(int j=0;j<adj.get(i).size();j++){
+                hm.put(adj.get(i).get(j), hm.getOrDefault(adj.get(i).get(j), 0)+1);
             }
         }
         
-        int idx = 0;
-        while(!s.isEmpty()){
-            arr[idx] = s.pop();
+        for(int i=0;i<V;i++){
+            if(hm.get(i) == 0){
+                q.add(i);
+            }
+        }
+        
+        while(!q.isEmpty()){
+            int key = q.poll();
+            arr[idx] = key;
             idx++;
+            
+            for(int i=0;i<adj.get(key).size();i++){
+                int node = adj.get(key).get(i);
+                hm.put(node, hm.get(node)-1);
+                
+                
+                if(hm.get(node) == 0){
+                    q.add(node);
+                }
+            }
+            
         }
         
         return arr;
-        
     }
 }
